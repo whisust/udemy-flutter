@@ -1,7 +1,5 @@
+import 'package:expenses_app/widgets/user_transactions.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
-import 'transaction.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,16 +31,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  final _dateFormat = DateFormat.yMMMd();
-  final List<Transaction> transactions = [
-    Transaction(
-        id: 'id1', title: 'New stuff', amount: 69.99, date: DateTime.now()),
-    Transaction(
-        id: 'id2', title: 'New stuff2', amount: 19.99, date: DateTime.now()),
-    Transaction(
-        id: 'id3', title: 'New stuff3', amount: 100, date: DateTime.now()),
-  ];
-
   MyHomePage({Key? key}) : super(key: key);
 
   @override
@@ -51,52 +39,17 @@ class MyHomePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Flutter app'),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(
-              width: double.infinity,
-              child:
-                  Card(color: Colors.blue, elevation: 5, child: Text('chart')),
-            ),
-            Column(
-                children: transactions
-                    .map((tx) => Card(
-                            child: Row(
-                          children: [
-                            Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 15),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.purple, width: 2)),
-                                padding: const EdgeInsets.all(10),
-                                child: Text(
-                                  '\$${tx.amount}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.purple,
-                                  ),
-                                )),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(tx.title,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
-                                Text(_dateFormat.format(tx.date),
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                    ))
-                              ],
-                            )
-                          ],
-                        )))
-                    .toList())
-          ],
-        ));
+        body: SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: const [
+              SizedBox(
+                width: double.infinity,
+                child: Card(
+                    color: Colors.blue, elevation: 5, child: Text('chart')),
+              ),
+              UserTransactions()
+            ])));
   }
 }
