@@ -17,26 +17,23 @@ class TransactionList extends StatelessWidget {
         Container(
             margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.purple, width: 2)),
+                border: Border.all(
+                    color: Theme.of(context).primaryColorDark, width: 2)),
             padding: const EdgeInsets.all(10),
             child: Text(
               '\$${tx.amount.toStringAsFixed(2)}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
-                color: Colors.purple,
+                color: Theme.of(context).primaryColor,
               ),
             )),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(tx.title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(tx.title, style: Theme.of(context).textTheme.titleLarge),
             Text(_dateFormat.format(tx.date),
-                style: const TextStyle(
-                  color: Colors.grey,
-                ))
+                style: Theme.of(context).textTheme.titleSmall)
           ],
         )
       ],
@@ -47,9 +44,20 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 500,
-        child: ListView.builder(
-          itemBuilder: _itemBuilder,
-          itemCount: transactions.length,
-        ));
+        child: transactions.isEmpty
+            ? Column(children: [
+                Text('No transactions added yet!',
+                    style: Theme.of(context).textTheme.titleMedium),
+                SizedBox(height: 10),
+                Container(
+                  height: 200,
+                  child: Image.asset('resources/assets/images/waiting.png',
+                      fit: BoxFit.cover),
+                )
+              ])
+            : ListView.builder(
+                itemBuilder: _itemBuilder,
+                itemCount: transactions.length,
+              ));
   }
 }
