@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
-import 'package:flutter/material.dart';
-
-import 'models/transaction.dart';
+import './models/transaction.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,14 +29,13 @@ class MyApp extends StatelessWidget {
           // Notice that the counter didn't reset back to zero; the application
           // is not restarted.
           // primarySwatch: Colors.purple,
-          colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: Colors.purple, accentColor: Colors.amber),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple, accentColor: Colors.amber),
           fontFamily: 'Quicksand',
-          appBarTheme: AppBarTheme(
-              titleTextStyle: TextStyle(
-                  fontFamily: 'OpenSans',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18))),
+          appBarTheme:
+              AppBarTheme(titleTextStyle: TextStyle(fontFamily: 'OpenSans', fontWeight: FontWeight.w700, fontSize: 18)),
+          textTheme: ThemeData.light().textTheme.copyWith(
+                button: TextStyle(color: Colors.white),
+              )),
       home: MyHomePage(),
     );
   }
@@ -51,29 +50,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final uuid = Uuid();
-  final List<Transaction> _userTransactions = [
-    // Transaction(
-    //     id: 'id1', title: 'New stuff', amount: 69.99, date: DateTime.now()),
-    // Transaction(
-    //     id: 'id2', title: 'New stuff2', amount: 19.99, date: DateTime.now()),
-    // Transaction(
-    //     id: 'id3', title: 'New stuff3', amount: 100, date: DateTime.now()),
-    // Transaction(
-    //     id: 'id4', title: 'New stuff4', amount: 10.01, date: DateTime.now()),
-    // Transaction(
-    //     id: 'id5', title: 'New stuff5', amount: 11.11, date: DateTime.now()),
-    // Transaction(
-    //     id: 'id6', title: 'New stuff6', amount: 11.11, date: DateTime.now()),
-  ];
+  final List<Transaction> _userTransactions = [];
 
-  void _addTransaction(String title, double amount) {
-    final newTransaction = Transaction(
-        id: uuid.v4().toString(),
-        title: title,
-        amount: amount,
-        date: DateTime.now());
+  List<Transaction> get _recentTransactions {
+    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    return _userTransactions.where((transaction) => transaction.date.isAfter(sevenDaysAgo)).toList();
+  }
+
+  void _addTransaction(String title, double amount, DateTime date) {
+    final newTransaction = Transaction(id: uuid.v4().toString(), title: title, amount: amount, date: date);
     setState(() {
       _userTransactions.add(newTransaction);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -82,35 +75,26 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (_) {
           return GestureDetector(
-              onTap: () {},
-              behavior: HitTestBehavior.opaque,
-              child: NewTransaction(addTransaction: _addTransaction));
+              onTap: () {}, behavior: HitTestBehavior.opaque, child: NewTransaction(addTransaction: _addTransaction));
         });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Personal Expenses'), actions: [
-        IconButton(
-            onPressed: () => _startAddNewTransaction(context),
-            icon: const Icon(Icons.add))
-      ]),
+      appBar: AppBar(
+          title: const Text('Personal Expenses'),
+          actions: [IconButton(onPressed: () => _startAddNewTransaction(context), icon: const Icon(Icons.add))]),
       body: SingleChildScrollView(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-            SizedBox(
-              width: double.infinity,
-              child:
-                  Card(color: Colors.blue, elevation: 5, child: Text('chart')),
-            ),
-            TransactionList(transactions: _userTransactions),
+            Chart(_recentTransactions),
+            TransactionList(transactions: _userTransactions, deleteTransaction: _deleteTransaction),
           ])),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => _startAddNewTransaction(context),
-          child: Icon(Icons.add)),
+      floatingActionButton:
+          FloatingActionButton(onPressed: () => _startAddNewTransaction(context), child: Icon(Icons.add)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
