@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import './adaptive_button.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTransaction;
@@ -47,41 +49,39 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          TextField(
-            decoration: const InputDecoration(labelText: 'Title'),
-            controller: _titleController,
-          ),
-          TextField(
-              decoration: const InputDecoration(labelText: 'Amount'),
-              controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true)),
-          Container(
-            height: 70,
-            child: Row(
+    return SingleChildScrollView(
+      child: Card(
+          elevation: 5,
+          child: Container(
+            padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Expanded(child: Text(_date == null ? 'No date chosen' : DateFormat.yMd().format(_date!))),
-                ElevatedButton(
-                  child: const Text('Choose date', style: TextStyle(fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.button, primary: Theme.of(context).primaryColor),
-                  onPressed: _presentDatePicker,
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Title'),
+                  controller: _titleController,
+                ),
+                TextField(
+                    decoration: const InputDecoration(labelText: 'Amount'),
+                    controller: _amountController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true)),
+                Container(
+                  height: 70,
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(_date == null ? 'No date chosen' : DateFormat.yMd().format(_date!))),
+                      AdaptiveFlatButton(text: 'Choose date', onPressed: _presentDatePicker)
+                    ],
+                  ),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(primary: Colors.purple),
+                  onPressed: _submitForm,
+                  child: const Text('Create transaction'),
                 )
               ],
             ),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(primary: Colors.purple),
-            onPressed: _submitForm,
-            child: const Text('Create transaction'),
-          )
-        ],
-      ),
-    ));
+          )),
+    );
   }
 }
