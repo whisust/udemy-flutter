@@ -53,7 +53,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final uuid = Uuid();
   final List<Transaction> _userTransactions = [];
   bool _showChart = false;
@@ -148,5 +148,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 : FloatingActionButton(onPressed: () => _startAddNewTransaction(context), child: Icon(Icons.add)),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('initState');
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }
