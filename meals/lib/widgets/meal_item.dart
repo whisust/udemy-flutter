@@ -5,10 +5,16 @@ import '../models/meal.dart';
 
 class MealItem extends StatelessWidget {
   final Meal meal;
-  const MealItem({Key? key, required this.meal}) : super(key: key);
+  final Function removeItem;
+
+  const MealItem({Key? key, required this.meal, required this.removeItem}) : super(key: key);
 
   void selectMeal(context) {
-    Navigator.of(context).pushNamed(MealDetailScreen.routeName, arguments: meal);
+    Navigator.of(context).pushNamed(MealDetailScreen.routeName, arguments: meal).then((result) {
+      if (result != null) {
+        removeItem(result);
+      }
+    });
   }
 
   @override
@@ -16,6 +22,9 @@ class MealItem extends StatelessWidget {
     return InkWell(
         onTap: () => selectMeal(context),
         child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          elevation: 4,
+          margin: EdgeInsets.all(10),
           child: Column(children: [
             Stack(
               children: [
@@ -80,9 +89,6 @@ class MealItem extends StatelessWidget {
               ),
             ),
           ]),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          elevation: 4,
-          margin: EdgeInsets.all(10),
         ));
   }
 }
