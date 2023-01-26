@@ -28,6 +28,7 @@ class CartScreen extends StatelessWidget {
                             style: Theme.of(context).primaryTextTheme.titleSmall),
                         backgroundColor: Theme.of(context).primaryColor,
                       ),
+                      SizedBox(width: 10),
                       TextButton(
                         onPressed: () {
                           final orders = Provider.of<Orders>(context, listen: false);
