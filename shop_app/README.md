@@ -27,7 +27,6 @@ Application E-Commerce
 - FocusNode
 - TextEditingController
 - GlobalKey
-- 
 
 ### Retour utilisateur
 - Modale de confirmation
@@ -35,3 +34,6 @@ Application E-Commerce
 
 ### Dart Syntax
 - imports avec conflits de nommage
+
+### Comportement Flutter
+- passage d'information et initialisation de widget depuis `didChangeDependencies` plutôt que `initState`

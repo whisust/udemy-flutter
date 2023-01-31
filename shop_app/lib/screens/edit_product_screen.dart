@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -17,12 +19,29 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
-  Product _product = Product(id: '', title: '', description: '', price: 0, imageUrl: '');
+  static const newProductId = 'undefined';
+  Product _product = Product(id: newProductId, title: '', description: '', price: 0, imageUrl: '');
+  bool _isInit = true;
 
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if(_isInit) {
+      _isInit = false;
+      final productId = ModalRoute.of(context)?.settings.arguments as String;
+      if (productId != null) {
+          final foundProduct = Provider.of<Products>(context).findById(productId);
+          _product = foundProduct;
+          _product.isFavorite = foundProduct.isFavorite;
+          _imageUrlController.text = _product.imageUrl;
+        }
+      }
+    super.didChangeDependencies();
   }
 
   String? textNotNull(String? value, String errorMessage) {
@@ -57,16 +76,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _saveForm() {
     final isValid = _form.currentState!.validate();
+    _form.currentState!.save();
     if (isValid) {
-      _form.currentState!.save();
-      _product = _product.copyWith(id: DateTime.now().toString());
-      print('###### TEST ######');
-      print(_product.id);
-      print(_product.title);
-      print(_product.price);
-      print(_product.description);
-      print(_product.imageUrl);
-      print('###### ENDTEST ######');
+      final products = Provider.of<Products>(context, listen: false);
+      if(_product.id != newProductId) {
+        products.updateProduct(_product.id, _product);
+      } else {
+        products.addProduct(_product);
+      }
+      Navigator.of(context).pop();
+      // _product = Product()
     }
   }
 
@@ -95,6 +114,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 TextFormField(
                     decoration: const InputDecoration(label: Text('Title')),
                     textInputAction: TextInputAction.next,
+                    initialValue: _product.title,
                     onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_priceFocusNode),
                     onSaved: (value) => {_product = _product.copyWith(title: value)},
                     validator: (value) {
@@ -103,6 +123,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 TextFormField(
                     decoration: const InputDecoration(label: Text('Price')),
                     textInputAction: TextInputAction.next,
+                    initialValue: _product.price.toStringAsFixed(2),
                     keyboardType: TextInputType.number,
                     focusNode: _priceFocusNode,
                     onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_descriptionFocusNode),
@@ -119,6 +140,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 TextFormField(
                     decoration: const InputDecoration(label: Text('Description')),
                     keyboardType: TextInputType.multiline,
+                    initialValue: _product.description,
                     focusNode: _descriptionFocusNode,
                     maxLines: 3,
                     onSaved: (value) => {_product = _product.copyWith(description: value)},
