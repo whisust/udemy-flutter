@@ -1,4 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shop_app/configuration.dart';
 import 'product.dart';
 
 class Products with ChangeNotifier {
@@ -8,7 +11,8 @@ class Products with ChangeNotifier {
       title: 'Red Shirt',
       description: 'A red shirt - it is pretty red!',
       price: 29.99,
-      imageUrl: 'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
+      imageUrl:
+          'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
     ),
     Product(
       id: 'p2',
@@ -23,14 +27,16 @@ class Products with ChangeNotifier {
       title: 'Yellow Scarf',
       description: 'Warm and cozy - exactly what you need for the winter.',
       price: 19.99,
-      imageUrl: 'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
+      imageUrl:
+          'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
     ),
     Product(
       id: 'p4',
       title: 'A Pan',
       description: 'Prepare any meal you want.',
       price: 49.99,
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
+      imageUrl:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
 
@@ -42,10 +48,24 @@ class Products with ChangeNotifier {
     return _items.where((product) => product.isFavorite).toList();
   }
 
-  void addProduct(Product value) {
-    final product = value.copyWith(id: DateTime.now().toString());
-    _items.add(product);
-    notifyListeners();
+  Future<void> addProduct(Product value) {
+    var product = value;
+    final url = Uri.parse('${Config.firebaseUrl}/products.json');
+    return http
+        .post(url,
+            body: json.encode({
+              'title': product.title,
+              'description': product.description,
+              'imageUrl': product.imageUrl,
+              'price': product.price.toStringAsFixed(2),
+              'isFavorite': product.isFavorite,
+            }))
+        .then((response) {
+      final jsonResp = json.decode(response.body);
+      product = value.copyWith(id: jsonResp['name'].toString());
+      _items.add(product);
+      notifyListeners();
+    });
   }
 
   Product findById(String productId) {

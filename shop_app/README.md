@@ -21,6 +21,8 @@ Application E-Commerce
 - Drawer
 - Card
 - ListTile
+- `showDialog` + AlertDialog
+- Center + CircularProgressIndicator
 
 ### User Input
 - Form / FormTextField
@@ -34,6 +36,13 @@ Application E-Commerce
 
 ### Dart Syntax
 - imports avec conflits de nommage
+- Future / then / catchError
+- catchError retourne `Future<Null>`, et non pas `Future<void>`
+
+### Network & Backend
+- Firebase
+- Realtime database coté firebase + POST `table.json` pour créer une table
+- module `http` et `dart:convert` + `json.encode` pour la sérialisation
 
 ### Comportement Flutter
 - passage d'information et initialisation de widget depuis `didChangeDependencies` plutôt que `initState`

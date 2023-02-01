@@ -5,7 +5,7 @@ import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/products_grid.dart';
-import '../widgets/badge.dart';
+import '../widgets/badge.dart' as myBadge;
 
 enum FilterOptions { Favorites, All }
 
@@ -26,7 +26,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         PopupMenuButton(
           icon: Icon(Icons.more_vert),
           itemBuilder: (context) => [
-            PopupMenuItem(child: Text('Only Favorites'), value: FilterOptions.Favorites),
+            PopupMenuItem(
+                child: Text('Only Favorites'), value: FilterOptions.Favorites),
             PopupMenuItem(child: Text('Show All'), value: FilterOptions.All),
           ],
           onSelected: (selectedValue) {
@@ -40,7 +41,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           },
         ),
         Consumer<Cart>(
-            builder: (_, cart, child) => Badge(value: cart.itemCount.toString(), child: child!),
+            builder: (_, cart, child) =>
+                myBadge.Badge(value: cart.itemCount.toString(), child: child!),
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
