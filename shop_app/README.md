@@ -38,11 +38,14 @@ Application E-Commerce
 - imports avec conflits de nommage
 - Future / then / catchError
 - catchError retourne `Future<Null>`, et non pas `Future<void>`
+- async / await pour complémenter les future.then.catch
 
 ### Network & Backend
 - Firebase
 - Realtime database coté firebase + POST `table.json` pour créer une table
 - module `http` et `dart:convert` + `json.encode` pour la sérialisation
+- PATCH & DELETE coté Firebase
 
 ### Comportement Flutter
 - passage d'information et initialisation de widget depuis `didChangeDependencies` plutôt que `initState`
+- Destruction du `context` lors d'utilisation avec await -> il faut pin le context à une closure supérieure 

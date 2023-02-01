@@ -79,37 +79,40 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     final isValid = _form.currentState!.validate();
     _form.currentState!.save();
-    setState(() {
-      _isLoading = true;
-    });
     if (isValid) {
+      var succeeded = false;
+      setState(() {
+        _isLoading = true;
+      });
       final products = Provider.of<Products>(context, listen: false);
       if (_product.id != newProductId) {
-        products.updateProduct(_product.id, _product);
+        await products.updateProduct(_product.id, _product);
         Navigator.of(context).pop();
       } else {
-          products.addProduct(_product)
-          .catchError((err) {
-            return showDialog<void>(
-                context: context,
-                builder: (ctx) =>
-                    AlertDialog(title: Text('Something went wrong'), actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('OK'))
-                    ]));
-          }).then((_){
-            setState(() {
-              _isLoading = false;
-            });
-            Navigator.of(context).pop();
-          });
+        try {
+          await products.addProduct(_product);
+          succeeded = true;
+        } catch (error) {
+          await showDialog(
+              context: context,
+              builder: (ctx) =>
+                  AlertDialog(title: Text('Something went wrong'), actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('OK'))
+                  ]));
+        }
       }
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (succeeded) Navigator.of(context).pop();
       // _product = Product()
     }
   }

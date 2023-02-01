@@ -48,40 +48,80 @@ class Products with ChangeNotifier {
     return _items.where((product) => product.isFavorite).toList();
   }
 
-  Future<void> addProduct(Product value) {
+  String _getFirebaseUrl(String? productId) {
+    return productId != null
+        ? '${Config.firebaseUrl}/products/${productId}.json'
+        : '${Config.firebaseUrl}/products.json';
+  }
+
+  Future<void> addProduct(Product value) async {
     var product = value;
-    final url = Uri.parse('${Config.firebaseUrl}/products.json');
-    return http
-        .post(url,
-            body: json.encode({
-              'title': product.title,
-              'description': product.description,
-              'imageUrl': product.imageUrl,
-              'price': product.price.toStringAsFixed(2),
-              'isFavorite': product.isFavorite,
-            }))
-        .then((response) {
-      final jsonResp = json.decode(response.body);
-      product = value.copyWith(id: jsonResp['name'].toString());
-      _items.add(product);
-      notifyListeners();
-    });
+    final response = await http.post(Uri.parse(_getFirebaseUrl(null)),
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price.toStringAsFixed(2),
+          'isFavorite': product.isFavorite,
+        }));
+
+    final jsonResp = json.decode(response.body);
+    product = value.copyWith(id: jsonResp['name'].toString());
+    _items.add(product);
+    notifyListeners();
+  }
+
+  Future<void> fetchProducts() async {
+    final response = await http.get(Uri.parse(_getFirebaseUrl(null)));
+    final jsonResp = json.decode(response.body) as Map<String, dynamic>;
+    // here remove the concatenation if you have enough items
+    _items = jsonResp.entries.map((entry) {
+      return Product(
+          id: entry.key,
+          description: entry.value['description'],
+          imageUrl: entry.value['imageUrl'],
+          price: double.parse(entry.value['price']),
+          title: entry.value['title'],
+          isFavorite: entry.value['isFavorite']);
+    }).toList();
+    notifyListeners();
   }
 
   Product findById(String productId) {
     return _items.firstWhere((product) => product.id == productId);
   }
 
-  void updateProduct(String productId, Product product) {
+  Future<void> updateProduct(String productId, Product product) async {
     final productIndex = _items.indexWhere((prod) => prod.id == productId);
     if (productIndex >= 0) {
+      await http.patch(Uri.parse(_getFirebaseUrl(productId)),
+          body: json.encode({
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price.toStringAsFixed(2),
+            'isFavorite': product.isFavorite,
+          }));
       _items[productIndex] = product;
       notifyListeners();
     }
   }
 
-  void deleteProduct(String productId) {
-    _items.removeWhere((prod) => prod.id == productId);
+  Future<void> deleteProduct(String productId) {
+    // Optimistic update by storing / re-adding the product if the deletion fails
+    final existingProductIndex =
+        _items.indexWhere((prod) => prod.id == productId);
+    Product? existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+    return http.delete(Uri.parse(_getFirebaseUrl(productId))).then((response) {
+      if (response.statusCode >= 400) {
+        _items.insert(existingProductIndex, existingProduct!);
+        notifyListeners();
+        throw Exception('failed to delete my dude');
+      } else {
+        existingProduct = null;
+      }
+    });
   }
 }
