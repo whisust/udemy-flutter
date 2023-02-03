@@ -7,6 +7,7 @@ class CartItem {
   final double pricePerProduct;
 
   CartItem({required this.id, required this.title, required this.quantity, required this.pricePerProduct});
+
 }
 
 class Cart with ChangeNotifier {

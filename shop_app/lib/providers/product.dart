@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../configuration.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -16,9 +21,25 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       this.isFavorite = false});
 
-  void toggleFavorite() {
+  Future<void> toggleFavorite() async {
+    final previousStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
+    try {
+      final response = await http.patch(
+          Config.getFirebaseUrlFor(Config.PRODUCTS_TABLE, id),
+          body: json.encode({
+            'isFavorite': isFavorite,
+          }));
+      if (response.statusCode >= 400) {
+        isFavorite = previousStatus;
+      }
+    } catch (err) {
+      isFavorite = previousStatus;
+      // throw new Exception('failed to toggle favorite my dude');
+    } finally {
+      notifyListeners();
+    }
   }
 
   Product copyWith({

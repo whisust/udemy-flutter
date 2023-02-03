@@ -20,6 +20,7 @@ class CartScreen extends StatelessWidget {
               child: Padding(
                   padding: EdgeInsets.all(8),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Total', style: TextStyle(fontSize: 20)),
                       Spacer(),
@@ -29,16 +30,8 @@ class CartScreen extends StatelessWidget {
                         backgroundColor: Theme.of(context).primaryColor,
                       ),
                       SizedBox(width: 10),
-                      TextButton(
-                        onPressed: () {
-                          final orders = Provider.of<Orders>(context, listen: false);
-                          orders.addOrder(cart.items.values.toList(), cart.totalAmount);
-                          cart.clear();
-                        },
-                        child: Text('ORDER NOW'),
-                      )
+                      OrderButton(cart: cart)
                     ],
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   ))),
           SizedBox(height: 10),
           Expanded(
@@ -56,5 +49,42 @@ class CartScreen extends StatelessWidget {
             },
           ))
         ]));
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    super.key,
+    required this.cart,
+  });
+
+  final Cart cart;
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isButtonDisabled = widget.cart.totalAmount <= 0 || _isLoading;
+    return _isLoading ?
+    CircularProgressIndicator() :
+    TextButton(
+      onPressed: isButtonDisabled ? null : () async {
+        final orders = Provider.of<Orders>(context, listen: false);
+        setState(() {
+          _isLoading = true;
+        });
+        await orders.addOrder(widget.cart.items.values.toList(), widget.cart.totalAmount);
+        setState(() {
+          _isLoading = false;
+        });
+        widget.cart.clear();
+      },
+      child: Text('ORDER NOW'),
+    );
   }
 }

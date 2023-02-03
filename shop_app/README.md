@@ -23,6 +23,8 @@ Application E-Commerce
 - ListTile
 - `showDialog` + AlertDialog
 - Center + CircularProgressIndicator
+- TextButton.disable si la fonction handler est `null`
+- FutureBuilder pour des widgets à rendement dynamique selon une future 
 
 ### User Input
 - Form / FormTextField
@@ -45,6 +47,7 @@ Application E-Commerce
 - Realtime database coté firebase + POST `table.json` pour créer une table
 - module `http` et `dart:convert` + `json.encode` pour la sérialisation
 - PATCH & DELETE coté Firebase
+- `http` module: une non-200 réponse ne génère une erreur que pour du GET et POST
 
 ### Comportement Flutter
 - passage d'information et initialisation de widget depuis `didChangeDependencies` plutôt que `initState`

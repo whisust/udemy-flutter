@@ -48,15 +48,9 @@ class Products with ChangeNotifier {
     return _items.where((product) => product.isFavorite).toList();
   }
 
-  String _getFirebaseUrl(String? productId) {
-    return productId != null
-        ? '${Config.firebaseUrl}/products/${productId}.json'
-        : '${Config.firebaseUrl}/products.json';
-  }
-
   Future<void> addProduct(Product value) async {
     var product = value;
-    final response = await http.post(Uri.parse(_getFirebaseUrl(null)),
+    final response = await http.post(Config.getFirebaseUrlFor(Config.PRODUCTS_TABLE, null),
         body: json.encode({
           'title': product.title,
           'description': product.description,
@@ -72,7 +66,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse(_getFirebaseUrl(null)));
+    final response = await http.get(Config.getFirebaseUrlFor(Config.PRODUCTS_TABLE, null));
     final jsonResp = json.decode(response.body) as Map<String, dynamic>;
     // here remove the concatenation if you have enough items
     _items = jsonResp.entries.map((entry) {
@@ -94,7 +88,7 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String productId, Product product) async {
     final productIndex = _items.indexWhere((prod) => prod.id == productId);
     if (productIndex >= 0) {
-      await http.patch(Uri.parse(_getFirebaseUrl(productId)),
+      await http.patch(Config.getFirebaseUrlFor(Config.PRODUCTS_TABLE, productId),
           body: json.encode({
             'title': product.title,
             'description': product.description,
@@ -114,7 +108,8 @@ class Products with ChangeNotifier {
     Product? existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     notifyListeners();
-    return http.delete(Uri.parse(_getFirebaseUrl(productId))).then((response) {
+
+    return http.delete(Config.getFirebaseUrlFor(Config.PRODUCTS_TABLE, productId)).then((response){
       if (response.statusCode >= 400) {
         _items.insert(existingProductIndex, existingProduct!);
         notifyListeners();
