@@ -25,6 +25,10 @@ Application E-Commerce
 - Center + CircularProgressIndicator
 - TextButton.disable si la fonction handler est `null`
 - FutureBuilder pour des widgets à rendement dynamique selon une future 
+- Transform avec Matrix4 + rotate
+- LinearGradient
+- Box + BoxDecoration + BoxShadow
+- Flexible
 
 ### User Input
 - Form / FormTextField
@@ -41,6 +45,7 @@ Application E-Commerce
 - Future / then / catchError
 - catchError retourne `Future<Null>`, et non pas `Future<void>`
 - async / await pour complémenter les future.then.catch
+- Notation .. pour accéder à une méthode et retourner l'objet courant au passage
 
 ### Network & Backend
 - Firebase
@@ -51,4 +56,8 @@ Application E-Commerce
 
 ### Comportement Flutter
 - passage d'information et initialisation de widget depuis `didChangeDependencies` plutôt que `initState`
-- Destruction du `context` lors d'utilisation avec await -> il faut pin le context à une closure supérieure 
+- Destruction du `context` lors d'utilisation avec await -> il faut pin le context à une closure supérieure
+
+### Firebase
+- DB Rules
+- Authentication ()

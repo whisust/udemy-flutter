@@ -7,6 +7,7 @@ import 'providers/products.dart';
 import 'screens/user_products_screen.dart';
 import 'screens/orders_screen.dart';
 import 'screens/product_detail_screen.dart';
+import 'screens/auth_screen.dart';
 import 'screens/products_overview_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/cart_screen.dart';
@@ -33,8 +34,9 @@ class MyApp extends StatelessWidget {
                 style: TextButton.styleFrom(
               primary: Colors.purple,
             ))),
-        home: ProductsOverviewScreen(),
+        home: AuthScreen(),
         routes: {
+          AuthScreen.routeName: (ctx) => AuthScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
           OrdersScreen.routeName: (ctx) => OrdersScreen(),
