@@ -11,6 +11,7 @@ Application E-Commerce
 - Consumer
 - Difference entre Stateful widgets et Provider
 - Stateful widget
+- ChangeNotifierProxyProvider
 
 ### UI
 - GridView
@@ -60,4 +61,6 @@ Application E-Commerce
 
 ### Firebase
 - DB Rules
-- Authentication ()
+- Authentication avec la clef d'API
+- Authentication utilisateur dans l'UI et dans les appels
+- Login / Logout

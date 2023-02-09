@@ -21,16 +21,14 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       this.isFavorite = false});
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String? authToken, String? userId) async {
     final previousStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     try {
-      final response = await http.patch(
-          Config.getFirebaseUrlFor(Config.PRODUCTS_TABLE, id),
-          body: json.encode({
-            'isFavorite': isFavorite,
-          }));
+      final response = await http.put(
+          Config.getFirebaseUrlFor(table: 'userFavorites/$userId', id: id, authToken: authToken),
+          body: json.encode(isFavorite));
       if (response.statusCode >= 400) {
         isFavorite = previousStatus;
       }

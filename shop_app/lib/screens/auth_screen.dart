@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import 'dart:math';
+
+import '../models/exceptions.dart';
+import '../providers/auth.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -36,8 +39,8 @@ class AuthScreen extends StatelessWidget {
                   Flexible(
                       child: Container(
                           margin: const EdgeInsets.only(bottom: 20),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 8, horizontal: 94),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 94),
                           transform: Matrix4.rotationZ(-8.0 * pi / 180)
                             ..translate(-10.0),
                           decoration: BoxDecoration(
@@ -59,7 +62,8 @@ class AuthScreen extends StatelessWidget {
                                   fontFamily: 'Anton',
                                   fontWeight: FontWeight.normal)))),
                   Flexible(
-                      flex: deviceSize.width > 600 ? 2 : 1, child: const AuthCard())
+                      flex: deviceSize.width > 600 ? 2 : 1,
+                      child: const AuthCard())
                 ],
               )))
     ]));
@@ -83,7 +87,7 @@ class _AuthCardState extends State<AuthCard> {
   bool _isLoading = false;
   final _passwordController = TextEditingController();
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -92,15 +96,53 @@ class _AuthCardState extends State<AuthCard> {
       _isLoading = true;
     });
 
-    if (_authMode == AuthMode.Login) {
-      // login
-    } else {
-      // register
+    try {
+      if (_authMode == AuthMode.Login) {
+        await Provider.of<Auth>(context, listen: false)
+            .logIn(_authData['email']!, _authData['password']!);
+      } else {
+        await Provider.of<Auth>(context, listen: false)
+            .signUp(_authData['email']!, _authData['password']!);
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authentication Failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address s already used';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'Invalid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'Weako Passwo';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Unknown email';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid credentials';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      const errorMessage =
+          'Cant access the authentication server. Make sure you have internet connection of retry later';
+      _showErrorDialog(errorMessage);
     }
 
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+                title: Text('An error occured'),
+                content: Text(message),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text('Okay'),
+                  )
+                ]));
   }
 
   void _switchAuthMode() {
@@ -170,8 +212,8 @@ class _AuthCardState extends State<AuthCard> {
                     if (_authMode == AuthMode.Signup)
                       TextFormField(
                         enabled: _authMode == AuthMode.Signup,
-                        decoration:
-                            const InputDecoration(labelText: 'Confirm Password'),
+                        decoration: const InputDecoration(
+                            labelText: 'Confirm Password'),
                         obscureText: true,
                         validator: _authMode == AuthMode.Signup
                             ? (value) {
@@ -206,8 +248,8 @@ class _AuthCardState extends State<AuthCard> {
                     TextButton(
                       onPressed: _switchAuthMode,
                       style: FilledButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 30, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 4),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           textStyle:
                               TextStyle(color: Theme.of(context).primaryColor)),

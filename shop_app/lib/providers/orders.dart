@@ -23,12 +23,15 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String? authToken;
+
+  Orders(this.authToken, this._orders);
 
   List<OrderItem> get orders => [..._orders];
 
   Future<void> addOrder(List<CartItem> cartItems, double total) async {
     final dt = DateTime.now();
-    final response = await http.post(Config.getFirebaseUrlFor('orders', null),
+    final response = await http.post(Config.getFirebaseUrlFor(table: 'orders', authToken: authToken),
         body: json.encode({
           'amount': total,
           'dateTime': dt.toIso8601String(),
@@ -53,7 +56,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchOrders() async {
-    final response = await http.get(Config.getFirebaseUrlFor('orders', null));
+    final response = await http.get(Config.getFirebaseUrlFor(table: 'orders', authToken: authToken));
     final jsonResp = json.decode(response.body);
     if (jsonResp != null) {
       _orders = (jsonResp as Map<String, dynamic>).entries.map((entry) {
