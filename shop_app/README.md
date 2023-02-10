@@ -64,3 +64,4 @@ Application E-Commerce
 - Authentication avec la clef d'API
 - Authentication utilisateur dans l'UI et dans les appels
 - Login / Logout
+- Filtrage des donnés via le query param 'orderBy'

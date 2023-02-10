@@ -55,7 +55,9 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product value) async {
     var product = value;
-    final response = await http.post(Config.getFirebaseUrlFor(table: 'products', authToken: authProvider?.token),
+    final response = await http.post(
+        Config.getFirebaseUrlFor(
+            table: 'products', authToken: authProvider?.token),
         body: json.encode({
           'title': product.title,
           'description': product.description,
@@ -70,10 +72,20 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchProducts() async {
-    final response = await http.get(Config.getFirebaseUrlFor(table: 'products', authToken: authProvider?.token));
+  Future<void> fetchProducts([bool filterByUser = false]) async {
+    final response = filterByUser
+        ? await http.get(Config.getFirebaseUrlFor(
+            table: 'products',
+            authToken: authProvider?.token,
+            orderBy: 'creatorId',
+            equalTo: authProvider?.userId))
+        : await http.get(Config.getFirebaseUrlFor(
+            table: 'products', authToken: authProvider?.token));
+
     final jsonResp = json.decode(response.body) as Map<String, dynamic>;
-    final favResponse = await http.get(Config.getFirebaseUrlFor(table: 'userFavorites/${authProvider?.userId}', authToken: authProvider?.token));
+    final favResponse = await http.get(Config.getFirebaseUrlFor(
+        table: 'userFavorites/${authProvider?.userId}',
+        authToken: authProvider?.token));
     var favJsonResp = json.decode(favResponse.body);
     if (favJsonResp == null) {
       favJsonResp = <String, dynamic>{};
@@ -88,7 +100,9 @@ class Products with ChangeNotifier {
           description: entry.value['description'],
           imageUrl: entry.value['imageUrl'],
           price: double.parse(entry.value['price']),
-          isFavorite: favJsonResp.containsKey(entry.key) ? favJsonResp[entry.key]! : false,
+          isFavorite: favJsonResp.containsKey(entry.key)
+              ? favJsonResp[entry.key]!
+              : false,
           title: entry.value['title']);
     }).toList();
     notifyListeners();
@@ -101,7 +115,9 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String productId, Product product) async {
     final productIndex = _items.indexWhere((prod) => prod.id == productId);
     if (productIndex >= 0) {
-      await http.patch(Config.getFirebaseUrlFor(table: 'products', id: productId, authToken: authProvider?.token),
+      await http.patch(
+          Config.getFirebaseUrlFor(
+              table: 'products', id: productId, authToken: authProvider?.token),
           body: json.encode({
             'title': product.title,
             'description': product.description,
@@ -121,7 +137,10 @@ class Products with ChangeNotifier {
     _items.removeAt(existingProductIndex);
     notifyListeners();
 
-    return http.delete(Config.getFirebaseUrlFor(table: 'products', id: productId, authToken: authProvider?.token)).then((response){
+    return http
+        .delete(Config.getFirebaseUrlFor(
+            table: 'products', id: productId, authToken: authProvider?.token))
+        .then((response) {
       if (response.statusCode >= 400) {
         _items.insert(existingProductIndex, existingProduct!);
         notifyListeners();

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../configuration.dart';
+import 'auth.dart';
 import 'cart.dart';
 
 class OrderItem {
@@ -23,15 +24,18 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
-  final String? authToken;
+  final Auth? authProvider;
 
-  Orders(this.authToken, this._orders);
+  Orders(this.authProvider, this._orders);
 
   List<OrderItem> get orders => [..._orders];
 
   Future<void> addOrder(List<CartItem> cartItems, double total) async {
     final dt = DateTime.now();
-    final response = await http.post(Config.getFirebaseUrlFor(table: 'orders', authToken: authToken),
+    final response = await http.post(
+        Config.getFirebaseUrlFor(
+            table: 'orders/${authProvider!.userId}',
+            authToken: authProvider!.token),
         body: json.encode({
           'amount': total,
           'dateTime': dt.toIso8601String(),
@@ -56,23 +60,29 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchOrders() async {
-    final response = await http.get(Config.getFirebaseUrlFor(table: 'orders', authToken: authToken));
+    final response = await http.get(Config.getFirebaseUrlFor(
+        table: 'orders/${authProvider!.userId}',
+        authToken: authProvider!.token));
     final jsonResp = json.decode(response.body);
     if (jsonResp != null) {
-      _orders = (jsonResp as Map<String, dynamic>).entries.map((entry) {
-        return OrderItem(
-            id: entry.key,
-            amount: entry.value['amount'],
-            dateTime: DateTime.parse(entry.value['dateTime']),
-            products: (entry.value['products'] as List<dynamic>)
-                .map((productResp) =>
-                CartItem(
-                    id: productResp['id'],
-                    title: productResp['title'],
-                    pricePerProduct: productResp['pricePerProduct'],
-                    quantity: productResp['quantity']))
-                .toList());
-      }).toList().reversed.toList();
+      _orders = (jsonResp as Map<String, dynamic>)
+          .entries
+          .map((entry) {
+            return OrderItem(
+                id: entry.key,
+                amount: entry.value['amount'],
+                dateTime: DateTime.parse(entry.value['dateTime']),
+                products: (entry.value['products'] as List<dynamic>)
+                    .map((productResp) => CartItem(
+                        id: productResp['id'],
+                        title: productResp['title'],
+                        pricePerProduct: productResp['pricePerProduct'],
+                        quantity: productResp['quantity']))
+                    .toList());
+          })
+          .toList()
+          .reversed
+          .toList();
       notifyListeners();
     }
   }
