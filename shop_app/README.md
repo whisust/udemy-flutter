@@ -41,12 +41,15 @@ Application E-Commerce
 - Modale de confirmation
 - Snackbar
 
-### Dart Syntax
+### Dart Syntax, stdlib, packages
 - imports avec conflits de nommage
 - Future / then / catchError
 - catchError retourne `Future<Null>`, et non pas `Future<void>`
 - async / await pour complémenter les future.then.catch
 - Notation .. pour accéder à une méthode et retourner l'objet courant au passage
+- Timer dans le package async
+- `shared_preferences` package pour du local storage KV Store
+
 
 ### Network & Backend
 - Firebase

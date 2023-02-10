@@ -5,18 +5,18 @@ import 'providers/auth.dart';
 import 'providers/cart.dart';
 import 'providers/orders.dart';
 import 'providers/products.dart';
-import 'screens/user_products_screen.dart';
+import 'screens/auth_screen.dart';
+import 'screens/cart_screen.dart';
+import 'screens/edit_product_screen.dart';
 import 'screens/orders_screen.dart';
 import 'screens/product_detail_screen.dart';
-import 'screens/auth_screen.dart';
 import 'screens/products_overview_screen.dart';
-import 'screens/edit_product_screen.dart';
-import 'screens/cart_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/user_products_screen.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -26,13 +26,15 @@ class MyApp extends StatelessWidget {
           create: (ctx) => Products(null, []),
           update: (BuildContext context, auth, Products? previous) {
             return Products(auth, previous == null ? [] : previous.items);
-          },),
+          },
+        ),
         ChangeNotifierProvider(create: (ctx) => Cart()),
         ChangeNotifierProxyProvider<Auth, Orders>(
           create: (ctx) => Orders(null, []),
           update: (BuildContext context, auth, Orders? previous) {
             return Orders(auth, previous == null ? [] : previous.orders);
-          },),
+          },
+        ),
       ],
       child: Consumer<Auth>(
         builder: (ctx, authProvider, _) {
@@ -40,13 +42,22 @@ class MyApp extends StatelessWidget {
             title: 'MyShop',
             theme: ThemeData(
                 primarySwatch: Colors.purple,
-                colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple, accentColor: Colors.deepOrange),
+                colorScheme: ColorScheme.fromSwatch(
+                    primarySwatch: Colors.purple,
+                    accentColor: Colors.deepOrange),
                 fontFamily: 'Lato',
                 textButtonTheme: TextButtonThemeData(
                     style: TextButton.styleFrom(
-                      primary: Colors.purple,
-                    ))),
-            home: authProvider.isAuthenticated ? ProductsOverviewScreen() : AuthScreen(),
+                  primary: Colors.purple,
+                ))),
+            home: authProvider.isAuthenticated
+                ? ProductsOverviewScreen()
+                : FutureBuilder<bool>(
+                    future: authProvider.tryAutoLogin(),
+                    builder: (ctx, snapshot) =>
+                        snapshot.connectionState == ConnectionState.waiting
+                            ? SplashScreen()
+                            : AuthScreen()),
             routes: {
               AuthScreen.routeName: (ctx) => AuthScreen(),
               ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
