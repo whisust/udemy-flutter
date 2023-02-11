@@ -39,6 +39,12 @@ Application E-Commerce
 - AnimatedBuilder / AnimatedContainer
 - SlideTransition
 - FadeTransition
+- Hero transition
+- Slivers pour la gestion de multiple zones scrollables (SliverAppBar + SliverList)
+- FadeInImage pour les placeholders
+- Custom Route.buildTransitions
+- Custom PageTransitionBuilder
+- PageTransitionsTheme
 
 ### User Input
 - Form / FormTextField
@@ -70,6 +76,8 @@ Application E-Commerce
 ### Comportement Flutter
 - passage d'information et initialisation de widget depuis `didChangeDependencies` plutôt que `initState`
 - Destruction du `context` lors d'utilisation avec await -> il faut pin le context à une closure supérieure
+- assets dans `pubspec.yaml`
+- AssetImage + NetworkImage
 
 ### Firebase
 - DB Rules
