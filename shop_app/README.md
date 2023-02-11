@@ -31,6 +31,15 @@ Application E-Commerce
 - Box + BoxDecoration + BoxShadow
 - Flexible
 
+### Animation
+- AnimationController -> controller.forward() / .reverse()
+- Animation<T>
+- Tween
+- CurvedAnimation / Curves.*
+- AnimatedBuilder / AnimatedContainer
+- SlideTransition
+- FadeTransition
+
 ### User Input
 - Form / FormTextField
 - FocusNode
