@@ -19,6 +19,6 @@ class PlacesListScreen extends StatelessWidget {
                 icon: Icon(Icons.add))
           ],
         ),
-        body: Center(child: CircularProgressIndicator(value: .5)));
+        body: Center(child: CircularProgressIndicator()));
   }
 }
