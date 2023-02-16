@@ -1,16 +1,27 @@
-# great_places_app
+# Great Places App
 
-A new Flutter project.
+App de sauvegarde d'endroits favoris
 
-## Getting Started
+## Sujets abordés
 
-This project is a starting point for a Flutter application.
+### UI
+- Scaffold / AppBar
+- ListView
+- Expanded
+- TextButton et TextButton.icon
 
-A few resources to get you started if this is your first Flutter project:
+### Fonctionnalités natives
+- Appareil photo avec `package:image_picker`
+- Localisation avec `package:location'
+- 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Dart Syntax, stdlib et packages
+- fichiers avec `dart:io`
+- manipulation de chemins avec `package:paths`
+- chemins pré-configurés avec `package:path_provider`
+- SQLite avec `package:sqflite`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+### State management
+- Consumer / Provider
+- 

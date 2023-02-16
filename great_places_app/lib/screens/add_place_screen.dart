@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:great_places_app/widgets/location_input.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_places.dart';
@@ -49,6 +50,8 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                   ),
                   SizedBox(height: 10),
                   ImageInput(onSelectImage: _selectImage),
+                  SizedBox(height: 10),
+                  LocationInput(),
                 ]),
               ),
             )),
@@ -61,7 +64,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.black87,
                   // textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.black87)),
-                ))
+                )),
           ],
         ));
   }

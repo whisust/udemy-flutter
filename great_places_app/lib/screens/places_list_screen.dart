@@ -22,24 +22,33 @@ class PlacesListScreen extends StatelessWidget {
                 icon: Icon(Icons.add))
           ],
         ),
-        body: Consumer<GreatPlaces>(
-            child: Center(child: Text('No places yet, start by adding some')),
-            builder: (ctx, greatPlaces, child) {
-              final places = greatPlaces.items;
-              return places.isEmpty
-                  ? child!
-                  : ListView.builder(
-                      itemCount: places.length,
-                      itemBuilder: (ctx, i) => ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: FileImage(places[i].image),
-                        ),
-                        title: Text(places[i].title),
-                        onTap: () {
-                          // todo go to details page
-                        },
-                      ),
-                    );
-            }));
+        body: FutureBuilder(
+          future: Provider.of<GreatPlaces>(context, listen: false).fetchPlaces(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return Consumer<GreatPlaces>(
+                  child: Center(child: Text('No places yet, start by adding some')),
+                  builder: (ctx, greatPlaces, child) {
+                    final places = greatPlaces.items;
+                    return places.isEmpty
+                        ? child!
+                        : ListView.builder(
+                            itemCount: places.length,
+                            itemBuilder: (ctx, i) => ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: FileImage(places[i].image),
+                              ),
+                              title: Text(places[i].title),
+                              onTap: () {
+                                // todo go to details page
+                              },
+                            ),
+                          );
+                  });
+            }
+          },
+        ));
   }
 }
