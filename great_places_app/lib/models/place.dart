@@ -3,13 +3,30 @@ import 'dart:io';
 class Location {
   final double latitude;
   final double longitude;
-  final String address;
+  final String? address;
 
   const Location({
     required this.latitude,
     required this.longitude,
-    required this.address,
+    this.address,
   });
+
+  @override
+  String toString() {
+    return 'Location{latitude: $latitude, longitude: $longitude, address: $address}';
+  }
+
+  Location copyWith({
+    double? latitude,
+    double? longitude,
+    String? address,
+  }) {
+    return Location(
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      address: address ?? this.address,
+    );
+  }
 }
 
 class Place {

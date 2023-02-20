@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import './add_place_screen.dart';
 import '../providers/user_places.dart';
+import './place_detail_screen.dart';
 
 class PlacesListScreen extends StatelessWidget {
   static const routeName = '/places';
@@ -13,23 +14,23 @@ class PlacesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Your Places'),
+          title: const Text('Your Places'),
           actions: [
             IconButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(AddPlaceScreen.routeName);
                 },
-                icon: Icon(Icons.add))
+                icon: const Icon(Icons.add))
           ],
         ),
         body: FutureBuilder(
           future: Provider.of<GreatPlaces>(context, listen: false).fetchPlaces(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               return Consumer<GreatPlaces>(
-                  child: Center(child: Text('No places yet, start by adding some')),
+                  child: const Center(child: Text('No places yet, start by adding some')),
                   builder: (ctx, greatPlaces, child) {
                     final places = greatPlaces.items;
                     return places.isEmpty
@@ -41,8 +42,10 @@ class PlacesListScreen extends StatelessWidget {
                                 backgroundImage: FileImage(places[i].image),
                               ),
                               title: Text(places[i].title),
+                              subtitle: Text(places[i].location.address ?? '<no address>',
+                                  style: const TextStyle(fontSize: 12)),
                               onTap: () {
-                                // todo go to details page
+                                Navigator.of(context).pushNamed(PlaceDetailScreen.routeName, arguments: places[i].id);
                               },
                             ),
                           );

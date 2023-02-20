@@ -4,9 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as syspath;
 
-
 class ImageInput extends StatefulWidget {
   final Function onSelectImage;
+
   const ImageInput({Key? key, required this.onSelectImage}) : super(key: key);
 
   @override
@@ -27,10 +27,7 @@ class _ImageInputState extends State<ImageInput> {
       final imageFileName = path.basename(imageFile.path);
       final imagePath = path.join(appDir.path, imageFileName);
       await imageFile.saveTo(imagePath);
-      print('##### Saved image to ${imagePath}');
       widget.onSelectImage(_storedImage);
-    } else {
-      print('##### Unhandled: imageFile is null');
     }
   }
 
@@ -44,17 +41,17 @@ class _ImageInputState extends State<ImageInput> {
         alignment: Alignment.center,
         child: _storedImage != null
             ? Image.file(_storedImage!, fit: BoxFit.cover, width: double.infinity)
-            : Text(
+            : const Text(
                 'No image taken',
                 textAlign: TextAlign.center,
               ),
       ),
-      SizedBox(width: 10),
+      const SizedBox(width: 10),
       Expanded(
         child: ElevatedButton.icon(
-          icon: Icon(Icons.camera),
+          icon: const Icon(Icons.camera),
           onPressed: _takePicture,
-          label: Text('Take Picture'),
+          label: const Text('Take Picture'),
           style: ElevatedButton.styleFrom(elevation: 0, textStyle: Theme.of(context).textTheme.labelLarge),
         ),
       )

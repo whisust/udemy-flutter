@@ -6,7 +6,9 @@ class DBHelper {
   static const PLACES_TABLE = 'user_places';
 
   static Future<void> _createDb(Database db, int version) {
-    return db.execute('CREATE TABLE $PLACES_TABLE(id TEXT PRIMARY KEY, title TEXT, image TEXT)');
+    return db.execute(
+        'CREATE TABLE $PLACES_TABLE(id TEXT PRIMARY KEY, title TEXT, image TEXT, loc_lat REAL, loc_lng REAL, loc_address TEXT)',
+        );
   }
 
   static Future<Database> _getDatabase() async {
