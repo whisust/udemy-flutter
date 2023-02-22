@@ -9,14 +9,41 @@ Ajouter les clefs d'api dans `lib/firebase_options.dart`
 ## Sujets abordés
 
 ### UI
+- Theme de l'app avec `ColorScheme` et `*ButtonThemeData`
+- StreamBuilder
+- ScaffoldMessenger et SnackBar
+- Dropdown
+  - DropdownButton
+  - DropdownMenuItem
+- FloatingActionButton
+- TextFormField + InputDecoration
 
 ### State Management
+- State local avec le widget Form / TextFormField
 
 ### Dart
 
 ### Flutter
 
 ### Packages externes
+- `package:firebase_core` requis pour Firebase
+- `package:cloud_firestore` requis pour s'interfacer avec Firestore
+- `package:firebase_auth` pour gérer l'authentification avec Firebase et la gestion du state dans l'app
 
 ### Firebase
-
+- Initialisation dans le `main()` avec
+```dart
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // runApp ...
+}
+```
+- FirebaseAuth
+  - register / sign in / sign out
+  - `.authStateChanges()`
+- FirebaseFirestore
+  - `.collection()` / `.collection(...).doc()`
+  - `.snapshots()` pour avoir le stream des mises à jour
+- Setup d'une db Firestore, collections + documents
+- Règles d'accès avec le DSL
