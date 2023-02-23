@@ -1,6 +1,9 @@
+import 'package:chat_app/widgets/chat/new_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/chat/messages.dart';
 
 class ChatScreen extends StatelessWidget {
   static const routeName = '/chat';
@@ -32,28 +35,15 @@ class ChatScreen extends StatelessWidget {
                 }
               })
         ],
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: StreamBuilder(
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              final messages = snapshot.data.docs;
-              return ListView.builder(
-                itemBuilder: (ctx, index) {
-                  return Container(padding: const EdgeInsets.all(8), child: Text(messages[index].data()['text']));
-                },
-                itemCount: messages.length,
-              );
-            }
-          },
-          stream: FirebaseFirestore.instance.collection('chats/MfBFLhnmf8RsqtzYYj5v/messages').snapshots()),
-      floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            FirebaseFirestore.instance.collection('chats/MfBFLhnmf8RsqtzYYj5v/messages').add({'text': 'Kek'});
-          }),
+      body: Container(
+          child: Column(
+        children: [
+          Expanded(child: Messages()),
+          NewMessage(),
+        ],
+      )),
     );
   }
 }

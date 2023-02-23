@@ -17,9 +17,11 @@ Ajouter les clefs d'api dans `lib/firebase_options.dart`
   - DropdownMenuItem
 - FloatingActionButton
 - TextFormField + InputDecoration
+- Expanded pour ajuster automatiquement la place prise par un widget
 
 ### State Management
 - State local avec le widget Form / TextFormField
+- TextEditingController pour controller un champ texte
 
 ### Dart
 
@@ -43,7 +45,7 @@ Future<void> main() async {
   - register / sign in / sign out
   - `.authStateChanges()`
 - FirebaseFirestore
-  - `.collection()` / `.collection(...).doc()`
+  - `.collection()` / `.collection(...).doc()` / `collection().orderBy()`
   - `.snapshots()` pour avoir le stream des mises à jour
 - Setup d'une db Firestore, collections + documents
 - Règles d'accès avec le DSL
