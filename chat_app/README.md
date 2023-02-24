@@ -18,6 +18,7 @@ Ajouter les clefs d'api dans `lib/firebase_options.dart`
 - FloatingActionButton
 - TextFormField + InputDecoration
 - Expanded pour ajuster automatiquement la place prise par un widget
+- MainAxisAlignement / CrossAxisAlignement
 
 ### State Management
 - State local avec le widget Form / TextFormField
