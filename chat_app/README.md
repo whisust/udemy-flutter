@@ -37,6 +37,7 @@ Ajouter les clefs d'api dans `lib/firebase_options.dart`
 - `package:firebase_auth` pour gérer l'authentification avec Firebase et la gestion du state dans l'app
 - `package:firebase_storage` pour la conection avec firebae Storage et les manipulation de fichiers
 - `package:image_picker` pour selectionner une image du tel ou en prendre une avec l'appareil
+- `package:firebase_messaging` pour la liaison avec FCM
 
 ### Firebase
 - Initialisation dans le `main()` avec
@@ -59,3 +60,7 @@ Future<void> main() async {
   - `.ref()` / `.child()` pour obtenir une réference
   - `.putFile()` pour stocker un fichier / `.whenComplete()`
   - `.getDownloadURL()` pour récupérer l'url de DL
+- FirebaseMessaging
+  - `.onMessage.listen()` pour souscrire aux messages en foreground
+  - `.onBackgroundMessage()` pour souscrire aux messages avec l'app en background
+  - dans `onBackgroundMessage`, `.getInitialMessage()` pour gérer un message avec l'app terminated

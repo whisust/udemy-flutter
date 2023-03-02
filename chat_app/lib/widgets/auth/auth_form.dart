@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import '../pickers/user_image_picker.dart';
 
 class AuthForm extends StatefulWidget {
-  final void Function(String email, String password, String? username, File? image, bool isLogin, BuildContext ctx) onSubmit;
+  final void Function(String email, String password, String? username, File? image, bool isLogin, BuildContext ctx)
+      onSubmit;
   bool isLoading;
 
   AuthForm({Key? key, required this.onSubmit, required this.isLoading}) : super(key: key);
@@ -60,6 +61,9 @@ class _AuthFormState extends State<AuthForm> {
                       if (!_isLogin) UserImagePicker(onImagePicked: _imagePicked),
                       TextFormField(
                         key: const ValueKey('email'),
+                        autocorrect: false,
+                        textCapitalization: TextCapitalization.none,
+                        enableSuggestions: false,
                         validator: (value) {
                           if (value == null || value.isEmpty || !value.contains('@')) {
                             return 'Invalid email';
@@ -77,6 +81,9 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                       if (!_isLogin)
                         TextFormField(
+                          textCapitalization: TextCapitalization.words,
+                          autocorrect: true,
+                          enableSuggestions: false,
                           key: const ValueKey('username'),
                           validator: (value) {
                             if (value == null || value.isEmpty || value.length < 2) {
